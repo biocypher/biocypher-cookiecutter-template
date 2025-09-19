@@ -54,7 +54,7 @@ The template uses the following variables:
 | `version` | Project version | `0.1.0` |
 | `license` | License type | `MIT` |
 | `python_version` | Python version requirement | `3.11` |
-| `biocypher_version` | BioCypher version | `latest` |
+| `biocypher_version` | BioCypher version | `latest` (fetched from PyPI) |
 
 ## Generated Project Structure
 

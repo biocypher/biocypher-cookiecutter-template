@@ -39,6 +39,24 @@ def main():
     
     print(f"Setting up {{ cookiecutter.project_name }}...")
     
+    # Handle BioCypher version if "latest" was selected
+    if "{{ cookiecutter.biocypher_version }}" == "latest":
+        latest_version = get_latest_biocypher_version()
+        print(f"Using latest BioCypher version: {latest_version}")
+        
+        # Update pyproject.toml with the actual latest version
+        pyproject_path = project_dir / "pyproject.toml"
+        if pyproject_path.exists():
+            content = pyproject_path.read_text()
+            # Replace the version in the dependencies
+            content = content.replace(
+                'biocypher>={{ cookiecutter.biocypher_version }}',
+                f'biocypher>={latest_version}'
+            )
+            pyproject_path.write_text(content)
+            print(f"✓ Updated pyproject.toml with BioCypher version {latest_version}")
+
+
     # Create additional directories
     additional_dirs = ["logs", "output", "data"]
     for dir_name in additional_dirs:
@@ -61,6 +79,21 @@ def main():
     print(f"3. Configure your data source in create_knowledge_graph.py")
     print(f"4. Update config/schema_config.yaml if needed")
     print(f"5. python create_knowledge_graph.py")
+
+
+def get_latest_biocypher_version():
+    """Fetch the latest BioCypher version from PyPI."""
+    try:
+        import json
+        import urllib.request
+        url = "https://pypi.org/pypi/biocypher/json"
+        with urllib.request.urlopen(url) as response:
+            data = json.load(response)
+            return data["info"]["version"]
+    except Exception as e:
+        print(f"Warning: Could not fetch latest BioCypher version from PyPI: {e}")
+        print("Falling back to version 0.10.1")
+        return "0.10.1"
 
 
 if __name__ == "__main__":
