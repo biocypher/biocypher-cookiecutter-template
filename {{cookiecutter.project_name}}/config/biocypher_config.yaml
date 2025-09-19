@@ -1,0 +1,29 @@
+# BioCypher Configuration for {{ cookiecutter.project_name }}
+
+# Database configuration
+database:
+  name: "{{ cookiecutter.package_name }}_kg"
+  uri: "bolt://localhost:7687"
+  user: "neo4j"
+  password: "password"
+
+# Output configuration
+output:
+  format: "neo4j"
+  clear: true
+  strict_mode: false
+
+# Logging configuration
+logging:
+  level: "INFO"
+  file: "logs/{{ cookiecutter.package_name }}.log"
+
+# Performance settings
+performance:
+  batch_size: 1000
+  max_workers: 4
+
+# Schema configuration
+schema:
+  config_path: "config/schema_config.yaml"
+  strict_validation: false

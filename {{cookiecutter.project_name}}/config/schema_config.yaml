@@ -1,0 +1,50 @@
+# Schema Configuration for {{ cookiecutter.project_name }}
+
+# Example schema configuration
+# Customize this based on your data source and requirements
+
+# Node types
+nodes:
+  # Example protein node
+  protein:
+    represented_as: node
+    preferred_id: uniprot_id
+    input_label: protein
+    is_a: protein
+    properties:
+      - name
+      - description
+      - organism
+      - sequence
+
+  # Example gene node
+  gene:
+    represented_as: node
+    preferred_id: gene_id
+    input_label: gene
+    is_a: gene
+    properties:
+      - name
+      - symbol
+      - description
+      - chromosome
+      - start_position
+      - end_position
+
+# Edge types
+edges:
+  # Example protein-gene relationship
+  protein_encoded_by_gene:
+    represented_as: edge
+    preferred_id: protein_gene_id
+    input_label: encoded_by
+    is_a: gene_to_gene_product_relationship
+    source: protein
+    target: gene
+    properties:
+      - confidence
+      - evidence
+
+# TODO: Add more node and edge types based on your data source
+# Refer to BioCypher documentation for more examples:
+# https://biocypher.org/BioCypher/learn/tutorials/tutorial002_handling_ontologies/

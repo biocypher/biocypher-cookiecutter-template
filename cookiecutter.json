@@ -1,0 +1,16 @@
+{
+    "project_name": "my-biocypher-pipeline",
+    "project_description": "A BioCypher pipeline for biological data integration",
+    "package_name": "{{ cookiecutter.project_name.replace('-', '_').replace(' ', '_') }}",
+    "adapter_name": "{{ cookiecutter.package_name }}_adapter",
+    "data_source_type": "file",
+    "include_docker": "y",
+    "include_tests": "y",
+    "schema_config": "y",
+    "author_name": "BioCypher User",
+    "author_email": "user@example.com",
+    "version": "0.1.0",
+    "license": "MIT",
+    "python_version": "3.11",
+    "biocypher_version": "latest"
+}

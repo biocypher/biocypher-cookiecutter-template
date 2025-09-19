@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "{{ cookiecutter.package_name }}"
+version = "{{ cookiecutter.version }}"
+description = "{{ cookiecutter.project_description }}"
+readme = "README.md"
+authors = [
+    {name = "{{ cookiecutter.author_name }}", email = "{{ cookiecutter.author_email }}"},
+]
+requires-python = ">={{ cookiecutter.python_version }}"
+dependencies = [
+    "biocypher>={{ cookiecutter.biocypher_version }}",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "requests>=2.32.0",
+{%- if cookiecutter.include_tests == "y" %}
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+{%- endif %}
+]
+
+{%- if cookiecutter.include_tests == "y" %}
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "black",
+    "isort",
+    "mypy",
+]
+{%- endif %}
+
+[project.urls]
+"Homepage" = "https://github.com/{{ cookiecutter.author_name | lower | replace(' ', '-') }}/{{ cookiecutter.package_name }}"
+"Bug Tracker" = "https://github.com/{{ cookiecutter.author_name | lower | replace(' ', '-') }}/{{ cookiecutter.package_name }}/issues"
+
+{%- if cookiecutter.include_tests == "y" %}
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+{%- endif %}
