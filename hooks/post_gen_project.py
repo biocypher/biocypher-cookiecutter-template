@@ -52,6 +52,9 @@ def main():
             run_command(f'git commit -m "Initial commit: {{ cookiecutter.project_name }}"')
     
     print(f"\n🎉 {{ cookiecutter.project_name }} setup complete!")
+    print(f"\n💡 For the best adaptation experience, use the BioCypher MCP Server:")
+    print(f"   https://biocypher.org/BioCypher/llms/")
+    print(f"   This provides interactive guidance for customizing your pipeline!")
     print(f"\nNext steps:")
     print(f"1. cd {{ cookiecutter.project_name }}")
     print(f"2. pip install -e .  # or uv sync")

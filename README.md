@@ -8,7 +8,7 @@ A [Cookiecutter](https://cookiecutter.readthedocs.io/) template for creating Bio
 - **Multiple Data Source Types**: Support for file, API, database, and custom data sources
 - **Docker Support**: Optional containerized deployment
 - **Testing Framework**: Optional comprehensive test setup
-- **Schema Configuration**: Pre-configured BioCypher schema setup
+- **Schema Configuration**: Pre-configured BioCypher schema setup (included by default)
 - **Git Integration**: Automatic git repository initialization
 
 ## Usage
@@ -45,11 +45,10 @@ The template uses the following variables:
 | `project_name` | Name of the project | `my-biocypher-pipeline` |
 | `project_description` | Project description | `A BioCypher pipeline for biological data integration` |
 | `package_name` | Python package name (auto-generated) | Based on project_name |
-| `adapter_name` | Adapter class name (auto-generated) | Based on package_name |
+| `adapter_name` | Adapter class name | `my_resource_adapter` |
 | `data_source_type` | Type of data source | `file` |
 | `include_docker` | Include Docker configuration | `y` |
 | `include_tests` | Include test framework | `y` |
-| `schema_config` | Include schema configuration | `y` |
 | `author_name` | Author name | `BioCypher User` |
 | `author_email` | Author email | `user@example.com` |
 | `version` | Project version | `0.1.0` |
@@ -68,10 +67,10 @@ my-biocypher-pipeline/
 │   ├── __init__.py
 │   └── adapters/
 │       ├── __init__.py
-│       └── my_biocypher_pipeline_adapter.py
+│       └── my_resource_adapter.py
 ├── tests/
 │   ├── __init__.py
-│   └── test_my_biocypher_pipeline_adapter.py
+│   └── test_my_resource_adapter.py
 ├── create_knowledge_graph.py
 ├── docker-compose.yml
 ├── Dockerfile
@@ -136,7 +135,24 @@ cookiecutter . --no-input project_name="test-pipeline" data_source_type="api"
 
 MIT License - see LICENSE file for details.
 
+## Next Steps: Adapting Your Pipeline
+
+The best way to adapt your BioCypher pipeline to your specific needs is through the **BioCypher MCP Server** available at https://mcp.biocypher.org. This MCP server provides:
+
+- **Interactive Guidance**: Step-by-step assistance for adapter creation
+- **Schema Configuration**: Help with BioCypher schema setup and customization
+- **Implementation Patterns**: Best practices for different data source types
+- **Resource Management**: Guidance on data download and caching strategies
+- **Decision Support**: Recommendations based on your data characteristics
+
+### Using the BioCypher MCP Server
+
+1. **Install MCP Client**: Use Cursor or another MCP-compatible client
+2. **Connect to Server**: Add the BioCypher MCP server at https://mcp.biocypher.org
+3. **Get Guidance**: Use the interactive tools to customize your pipeline
+4. **Implement**: Follow the provided patterns and recommendations
+
 ## Related Projects
 
 - [BioCypher](https://github.com/biocypher/biocypher) - The main BioCypher framework
-- [BioCypher MCP](https://github.com/slobentanzer/biocypher-mcp) - MCP server for BioCypher workflows
+- [BioCypher MCP](https://biocypher.org/BioCypher/llms/) - Interactive MCP server for BioCypher workflows
