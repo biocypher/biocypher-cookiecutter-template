@@ -62,8 +62,11 @@ def main():
     pascal_case_name = clean_and_convert_to_pascal_case(original_name)
     snake_case_name = clean_and_convert_to_snake_case(original_name)
     
-    # Add "Adapter" suffix to PascalCase name
-    adapter_class_name = f"{pascal_case_name}Adapter"
+    # Add "Adapter" suffix to PascalCase name only if it doesn't already end with "Adapter"
+    if pascal_case_name.endswith("Adapter"):
+        adapter_class_name = pascal_case_name
+    else:
+        adapter_class_name = f"{pascal_case_name}Adapter"
     
     # Create a temporary file with the generated names
     # This will be read by the post-gen hook to update the generated files
