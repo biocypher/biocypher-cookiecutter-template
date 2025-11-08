@@ -46,7 +46,7 @@ The template uses the following variables:
 | `project_description` | Project description | `A BioCypher pipeline for biological data integration` |
 | `package_name` | Python package name (auto-generated) | Based on project_name |
 | `adapter_name` | Adapter class name | `my_resource_adapter` |
-| `data_source_type` | Type of data source | `file` |
+| `data_source_type` | Type of data source | `csv` |
 | `include_docker` | Include Docker configuration | `y` |
 | `include_tests` | Include test framework | `y` |
 | `author_name` | Author name | `BioCypher User` |
@@ -79,29 +79,17 @@ my-biocypher-pipeline/
 └── .gitignore
 ```
 
-## Data Source Types
+## Data Source
 
-The template supports different data source types with pre-configured adapter templates:
+The template is configured for **CSV data sources** by default:
 
-### File-based (`file`)
-- JSON, CSV, TSV file processing
-- Automatic file type detection
-- Example implementations included
+### CSV Processing
+- **Pandas-based**: Uses pandas for robust CSV reading and processing
+- **Flexible**: Handles various CSV formats and structures
+- **Simple**: Straightforward implementation that users can easily customize
+- **Extensible**: Easy to modify for specific data requirements
 
-### API-based (`api`)
-- REST API integration
-- Request handling and error management
-- JSON response processing
-
-### Database-based (`database`)
-- SQLite, PostgreSQL, MySQL support
-- Connection management
-- Query result processing
-
-### Custom (`custom`)
-- Flexible template for custom data sources
-- Placeholder implementation
-- Easy to extend
+The adapter assumes CSV input and provides a clean foundation that users (or the BioCypher MCP copilot) can adapt for their specific data sources and processing needs.
 
 ## Post-Generation Setup
 

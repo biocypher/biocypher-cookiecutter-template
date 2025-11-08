@@ -2,14 +2,14 @@
 """
 {{ cookiecutter.project_name }} - {{ cookiecutter.project_description }}
 
-This script creates a knowledge graph using BioCypher and the {{ cookiecutter.adapter_name }}.
+This script creates a knowledge graph using BioCypher and the PLACEHOLDER_ADAPTER_CLASS_NAME.
 """
 
 import logging
 from pathlib import Path
 
 from biocypher import BioCypher
-from {{ cookiecutter.package_name }}.adapters.{{ cookiecutter.adapter_name }} import {{ cookiecutter.adapter_name.replace('_', '').title() }}Adapter
+from {{ cookiecutter.package_name }}.adapters.{{ cookiecutter.adapter_name }} import PLACEHOLDER_ADAPTER_CLASS_NAME
 
 # Configure logging
 logging.basicConfig(
@@ -30,10 +30,10 @@ def main():
     )
     
     # Initialize the adapter
-    # TODO: Configure your data source path/URL here
-    data_source = "path/to/your/data"  # Update this with your actual data source
+    # TODO: Configure your CSV data source path here
+    data_source = "data/your_data.csv"  # Update this with your actual CSV file path
     
-    adapter = {{ cookiecutter.adapter_name.replace('_', '').title() }}Adapter(
+    adapter = PLACEHOLDER_ADAPTER_CLASS_NAME(
         data_source=data_source,
         # Add any additional configuration parameters here
     )

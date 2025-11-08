@@ -1,146 +1,90 @@
 """
-{{ cookiecutter.adapter_name.replace('_', ' ').title() }} Adapter
+PLACEHOLDER_PASCAL_CASE_NAME Adapter
 
-This adapter handles {{ cookiecutter.data_source_type }} data source for BioCypher.
+This adapter handles CSV data source for BioCypher.
 """
 
 import logging
-from typing import Any, Dict, List, Optional, Union
 from pathlib import Path
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
 
-class {{ cookiecutter.adapter_name.replace('_', '').title() }}Adapter:
+class PLACEHOLDER_ADAPTER_CLASS_NAME:
     """
-    Adapter for {{ cookiecutter.adapter_name.replace('_', ' ') }} data source.
+    Adapter for CSV data source.
     
-    This adapter implements the BioCypher adapter interface for {{ cookiecutter.data_source_type }} data.
+    This adapter implements the BioCypher adapter interface for CSV data.
     """
     
-    def __init__(self, data_source: Union[str, Path], **kwargs):
+    def __init__(self, data_source: str | Path, **kwargs):
         """
         Initialize the adapter.
         
         Args:
-            data_source: Path or URL to the data source
+            data_source: Path to the CSV data source
             **kwargs: Additional configuration parameters
         """
         self.data_source = data_source
         self.config = kwargs
-        logger.info(f"Initialized {{ cookiecutter.adapter_name }} with data source: {data_source}")
+        logger.info(f"Initialized PLACEHOLDER_ADAPTER_CLASS_NAME with data source: {data_source}")
         
-    def get_nodes(self) -> List[Dict[str, Any]]:
+    def get_nodes(self) -> list[dict[str, any]]:
         """
-        Extract nodes from the data source.
+        Extract nodes from the CSV data source.
         
         Returns:
             List of node dictionaries
         """
-        logger.info("Extracting nodes from {{ cookiecutter.data_source_type }} data source")
+        logger.info("Extracting nodes from CSV data source")
         nodes = []
         
-        # TODO: Implement node extraction based on your {{ cookiecutter.data_source_type }} data source
-        # Example implementation for different data source types:
-        
-        {%- if cookiecutter.data_source_type == "file" %}
-        # File-based data source
-        if isinstance(self.data_source, (str, Path)):
+        try:
             data_path = Path(self.data_source)
-            if data_path.exists():
-                # Process file based on extension
-                if data_path.suffix == '.json':
-                    import json
-                    with open(data_path, 'r') as f:
-                        data = json.load(f)
-                        # Process JSON data and create nodes
-                        for item in data:
-                            nodes.append({
-                                'id': item.get('id'),
-                                'label': item.get('type', 'Unknown'),
-                                'properties': item
-                            })
-                elif data_path.suffix in ['.csv', '.tsv']:
-                    import pandas as pd
-                    df = pd.read_csv(data_path)
-                    # Process CSV data and create nodes
-                    for _, row in df.iterrows():
-                        nodes.append({
-                            'id': str(row.get('id', '')),
-                            'label': 'DataNode',
-                            'properties': row.to_dict()
-                        })
-        {%- elif cookiecutter.data_source_type == "api" %}
-        # API-based data source
-        import requests
-        
-        try:
-            response = requests.get(self.data_source)
-            response.raise_for_status()
-            data = response.json()
+            if not data_path.exists():
+                logger.error(f"Data source file not found: {data_path}")
+                return nodes
             
-            # Process API response and create nodes
-            for item in data:
+            # Read CSV file using pandas
+            df = pd.read_csv(data_path)
+            logger.info(f"Loaded CSV with {len(df)} rows and {len(df.columns)} columns")
+            
+            # Process CSV data and create nodes
+            for _, row in df.iterrows():
+                # Assume first column is ID, or use index if no ID column
+                node_id = str(row.iloc[0]) if len(df.columns) > 0 else str(row.name)
+                
                 nodes.append({
-                    'id': item.get('id'),
-                    'label': item.get('type', 'APINode'),
-                    'properties': item
+                    'id': node_id,
+                    'label': 'DataNode',  # Customize based on your data
+                    'properties': row.to_dict()
                 })
-        except requests.RequestException as e:
-            logger.error(f"Failed to fetch data from API: {e}")
-        {%- elif cookiecutter.data_source_type == "database" %}
-        # Database-based data source
-        # TODO: Implement database connection and querying
-        # Example with SQLite:
-        import sqlite3
-        
-        try:
-            conn = sqlite3.connect(self.data_source)
-            cursor = conn.cursor()
-            
-            # Example query - customize based on your database schema
-            cursor.execute("SELECT * FROM your_table")
-            rows = cursor.fetchall()
-            
-            for row in rows:
-                nodes.append({
-                    'id': str(row[0]),  # Assuming first column is ID
-                    'label': 'DatabaseNode',
-                    'properties': dict(zip([desc[0] for desc in cursor.description], row))
-                })
-            
-            conn.close()
+                
         except Exception as e:
-            logger.error(f"Failed to connect to database: {e}")
-        {%- else %}
-        # Custom data source
-        # TODO: Implement custom data processing logic
-        logger.warning("Custom data source type - implement your own processing logic")
-        {%- endif %}
+            logger.error(f"Failed to process CSV data: {e}")
         
         logger.info(f"Extracted {len(nodes)} nodes")
         return nodes
     
-    def get_edges(self) -> List[Dict[str, Any]]:
+    def get_edges(self) -> list[dict[str, any]]:
         """
-        Extract edges from the data source.
+        Extract edges from the CSV data source.
         
         Returns:
             List of edge dictionaries
         """
-        logger.info("Extracting edges from {{ cookiecutter.data_source_type }} data source")
+        logger.info("Extracting edges from CSV data source")
         edges = []
         
-        # TODO: Implement edge extraction based on your data source
+        # TODO: Implement edge extraction based on your CSV data
         # This is where you would identify relationships between nodes
-        
-        # Example: If your data contains relationship information
-        # Process your data to identify relationships and create edge dictionaries
+        # For example, if your CSV has columns like 'source_id' and 'target_id'
         
         logger.info(f"Extracted {len(edges)} edges")
         return edges
     
-    def get_metadata(self) -> Dict[str, Any]:
+    def get_metadata(self) -> dict[str, any]:
         """
         Get metadata about the data source.
         
@@ -148,40 +92,29 @@ class {{ cookiecutter.adapter_name.replace('_', '').title() }}Adapter:
             Dictionary containing metadata
         """
         return {
-            'name': '{{ cookiecutter.adapter_name }}',
+            'name': 'PLACEHOLDER_ADAPTER_CLASS_NAME',
             'data_source': str(self.data_source),
-            'data_type': '{{ cookiecutter.data_source_type }}',
+            'data_type': 'csv',
             'version': '{{ cookiecutter.version }}',
-            'adapter_class': '{{ cookiecutter.adapter_name.replace('_', '').title() }}Adapter'
+            'adapter_class': 'PLACEHOLDER_ADAPTER_CLASS_NAME'
         }
     
     def validate_data_source(self) -> bool:
         """
-        Validate that the data source is accessible and properly formatted.
+        Validate that the CSV data source is accessible and properly formatted.
         
         Returns:
             True if data source is valid, False otherwise
         """
         try:
-            {%- if cookiecutter.data_source_type == "file" %}
-            # Validate file-based data source
             data_path = Path(self.data_source)
-            return data_path.exists() and data_path.is_file()
-            {%- elif cookiecutter.data_source_type == "api" %}
-            # Validate API-based data source
-            import requests
-            response = requests.head(self.data_source, timeout=10)
-            return response.status_code == 200
-            {%- elif cookiecutter.data_source_type == "database" %}
-            # Validate database-based data source
-            import sqlite3
-            conn = sqlite3.connect(self.data_source)
-            conn.close()
-            return True
-            {%- else %}
-            # Custom validation
-            return True
-            {%- endif %}
+            if not data_path.exists() or not data_path.is_file():
+                return False
+            
+            # Try to read the CSV to validate format
+            df = pd.read_csv(data_path, nrows=1)  # Read just first row
+            return len(df.columns) > 0
+            
         except Exception as e:
             logger.error(f"Data source validation failed: {e}")
             return False

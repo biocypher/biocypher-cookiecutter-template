@@ -39,6 +39,18 @@ def main():
     
     print(f"Setting up {{ cookiecutter.project_name }}...")
     
+    # Read generated names from pre-gen hook
+    names_file = Path("generated_names.txt")
+    generated_names = {}
+    if names_file.exists():
+        with open(names_file, 'r') as f:
+            for line in f:
+                if '=' in line:
+                    key, value = line.strip().split('=', 1)
+                    generated_names[key] = value
+        names_file.unlink()  # Clean up temporary file
+        print(f"✓ Loaded generated names: {generated_names}")
+    
     # Handle BioCypher version if "latest" was selected
     if "{{ cookiecutter.biocypher_version }}" == "latest":
         latest_version = get_latest_biocypher_version()
@@ -55,6 +67,10 @@ def main():
             )
             pyproject_path.write_text(content)
             print(f"✓ Updated pyproject.toml with BioCypher version {latest_version}")
+    
+    # Update adapter files with generated names
+    if generated_names:
+        update_adapter_files(project_dir, generated_names)
 
 
     # Create additional directories
@@ -79,6 +95,43 @@ def main():
     print(f"3. Configure your data source in create_knowledge_graph.py")
     print(f"4. Update config/schema_config.yaml if needed")
     print(f"5. python create_knowledge_graph.py")
+
+
+def update_adapter_files(project_dir: Path, generated_names: dict):
+    """Update adapter files with generated standardized names."""
+    adapter_class_name = generated_names.get('adapter_class_name', 'MyResourceAdapter')
+    pascal_case_name = generated_names.get('pascal_case_name', 'MyResource')
+    snake_case_name = generated_names.get('snake_case_name', 'my_resource')
+    
+    # Update adapter file
+    adapter_file = project_dir / "src" / "{{ cookiecutter.package_name }}" / "adapters" / "{{ cookiecutter.adapter_name }}.py"
+    if adapter_file.exists():
+        content = adapter_file.read_text()
+        # Replace placeholders with actual generated names
+        content = content.replace('PLACEHOLDER_ADAPTER_CLASS_NAME', adapter_class_name)
+        content = content.replace('PLACEHOLDER_PASCAL_CASE_NAME', pascal_case_name)
+        adapter_file.write_text(content)
+        print(f"✓ Updated adapter file with {adapter_class_name}")
+    
+    # Update test file
+    test_file = project_dir / "tests" / "test_{{ cookiecutter.adapter_name }}.py"
+    if test_file.exists():
+        content = test_file.read_text()
+        # Replace placeholders with actual generated names
+        content = content.replace('PLACEHOLDER_ADAPTER_CLASS_NAME', adapter_class_name)
+        content = content.replace('PLACEHOLDER_PASCAL_CASE_NAME', pascal_case_name)
+        test_file.write_text(content)
+        print(f"✓ Updated test file with {adapter_class_name}")
+    
+    # Update main script
+    main_script = project_dir / "create_knowledge_graph.py"
+    if main_script.exists():
+        content = main_script.read_text()
+        # Replace placeholders with actual generated names
+        content = content.replace('PLACEHOLDER_ADAPTER_CLASS_NAME', adapter_class_name)
+        content = content.replace('PLACEHOLDER_PASCAL_CASE_NAME', pascal_case_name)
+        main_script.write_text(content)
+        print(f"✓ Updated main script with {adapter_class_name}")
 
 
 def get_latest_biocypher_version():
