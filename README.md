@@ -2,6 +2,9 @@
 
 A [Cookiecutter](https://cookiecutter.readthedocs.io/) template for creating BioCypher pipeline projects.
 
+> [!CAUTION]
+> Mostly vibe-coded for prototyping. Still needs thorough vetting.
+
 ## Features
 
 - **Complete BioCypher Pipeline**: Ready-to-use project structure
