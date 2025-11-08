@@ -132,6 +132,15 @@ def update_adapter_files(project_dir: Path, generated_names: dict):
         content = content.replace('PLACEHOLDER_PASCAL_CASE_NAME', pascal_case_name)
         main_script.write_text(content)
         print(f"✓ Updated main script with {adapter_class_name}")
+    
+    # Update adapters __init__.py file
+    adapters_init_file = project_dir / "src" / "{{ cookiecutter.package_name }}" / "adapters" / "__init__.py"
+    if adapters_init_file.exists():
+        content = adapters_init_file.read_text()
+        # Replace placeholders with actual generated names
+        content = content.replace('PLACEHOLDER_ADAPTER_CLASS_NAME', adapter_class_name)
+        adapters_init_file.write_text(content)
+        print(f"✓ Updated adapters __init__.py with {adapter_class_name}")
 
 
 def get_latest_biocypher_version():
