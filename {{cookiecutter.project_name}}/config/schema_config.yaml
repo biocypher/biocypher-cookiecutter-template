@@ -1,4 +1,4 @@
-# Schema Configuration for {{ cookiecutter.project_name }}
+# Schema Configuration for sys-bio-kgs
 
 # Example schema configuration
 # Customize this based on your data source and requirements
@@ -9,22 +9,22 @@ protein:  # Class name in lowercase, exists in the ontology
   represented_as: node
   input_label: protein  # Used to identify the node in the input (second element of the node tuple)
   properties:  # Keys of the property dictionary (third element of the node tuple)
-    - name
-    - description
-    - organism
-    - sequence
+    name: string
+    description: string
+    organism: string
+    sequence: string
 
 # Example gene node
 gene:  # Class name in lowercase, exists in the ontology
   represented_as: node
   input_label: gene
   properties:
-    - name
-    - symbol
-    - description
-    - chromosome
-    - start_position
-    - end_position
+    name: string
+    symbol: string
+    description: string
+    chromosome: string
+    start_position: integer
+    end_position: integer
 
 # Edge types
 # Example protein-gene relationship
@@ -35,8 +35,8 @@ protein_encoded_by_gene:  # Edge name in lowercase, does not exist in the ontolo
   source: protein  # Source node type
   target: gene  # Target node type
   properties:  # Keys of the property dictionary (fifth element of the edge tuple)
-    - confidence
-    - evidence
+    confidence: float
+    evidence: string
 
 # TODO: Add more node and edge types based on your data source
 # Refer to BioCypher documentation for more examples:

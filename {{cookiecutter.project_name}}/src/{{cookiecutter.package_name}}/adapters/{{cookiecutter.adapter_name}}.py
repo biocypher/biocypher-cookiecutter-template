@@ -30,59 +30,79 @@ class PLACEHOLDER_ADAPTER_CLASS_NAME:
         self.config = kwargs
         logger.info(f"Initialized PLACEHOLDER_ADAPTER_CLASS_NAME with data source: {data_source}")
         
-    def get_nodes(self) -> list[dict[str, any]]:
+    def get_nodes(self):
         """
-        Extract nodes from the CSV data source.
+        Extract nodes from the data source.
         
-        Returns:
-            List of node dictionaries
+        Yields:
+            Tuples of (node_id, node_label, properties_dict) for each node
         """
-        logger.info("Extracting nodes from CSV data source")
-        nodes = []
+        logger.info("Extracting nodes from data source")
         
-        try:
-            data_path = Path(self.data_source)
-            if not data_path.exists():
-                logger.error(f"Data source file not found: {data_path}")
-                return nodes
-            
-            # Read CSV file using pandas
-            df = pd.read_csv(data_path)
-            logger.info(f"Loaded CSV with {len(df)} rows and {len(df.columns)} columns")
-            
-            # Process CSV data and create nodes
-            for _, row in df.iterrows():
-                # Assume first column is ID, or use index if no ID column
-                node_id = str(row.iloc[0]) if len(df.columns) > 0 else str(row.name)
-                
-                nodes.append({
-                    'id': node_id,
-                    'label': 'DataNode',  # Customize based on your data
-                    'properties': row.to_dict()
-                })
-                
-        except Exception as e:
-            logger.error(f"Failed to process CSV data: {e}")
+        # Dummy protein nodes matching schema
+        protein_nodes = [
+            ("P12345", "protein", {
+                "name": "Insulin",
+                "description": "Hormone that regulates glucose metabolism",
+                "organism": "Homo sapiens",
+                "sequence": "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN"
+            }),
+            ("P01308", "protein", {
+                "name": "Insulin-like growth factor I",
+                "description": "Growth factor involved in cell growth and differentiation",
+                "organism": "Homo sapiens",
+                "sequence": "MGFPLRPVAVYFLHRGQHSRGEASLLCLKDQELVCGDREVFPLPPEVGQKVEVTTDINGQYKRVPQCSQCHSVECSVCQDLWELVDTQYCT"
+            }),
+        ]
         
-        logger.info(f"Extracted {len(nodes)} nodes")
-        return nodes
+        # Dummy gene nodes matching schema
+        gene_nodes = [
+            ("ENSG00000129965", "gene", {
+                "name": "INS",
+                "symbol": "INS",
+                "description": "Insulin gene",
+                "chromosome": "11",
+                "start_position": 2157796,
+                "end_position": 2160023
+            }),
+            ("ENSG00000117411", "gene", {
+                "name": "IGF1",
+                "symbol": "IGF1",
+                "description": "Insulin-like growth factor 1 gene",
+                "chromosome": "12",
+                "start_position": 102395880,
+                "end_position": 102481116
+            }),
+        ]
+        
+        for node in protein_nodes + gene_nodes:
+            yield node
+        
+        logger.info(f"Extracted {len(protein_nodes) + len(gene_nodes)} nodes")
     
-    def get_edges(self) -> list[dict[str, any]]:
+    def get_edges(self):
         """
-        Extract edges from the CSV data source.
+        Extract edges from the data source.
         
-        Returns:
-            List of edge dictionaries
+        Yields:
+            Tuples of (source_id, target_id, edge_label, edge_type, properties_dict) for each edge
         """
-        logger.info("Extracting edges from CSV data source")
-        edges = []
+        logger.info("Extracting edges from data source")
         
-        # TODO: Implement edge extraction based on your CSV data
-        # This is where you would identify relationships between nodes
-        # For example, if your CSV has columns like 'source_id' and 'target_id'
+        # Dummy edges matching schema (protein_encoded_by_gene with input_label "encoded_by")
+        edges = [
+            ("P12345", "ENSG00000129965", "encoded_by", "encoded_by", {
+                "confidence": 0.95,
+                "evidence": "experimental"
+            }),
+            ("P01308", "ENSG00000117411", "encoded_by", "encoded_by", {
+                "confidence": 0.98,
+                "evidence": "experimental"
+            }),
+        ]
         
-        logger.info(f"Extracted {len(edges)} edges")
-        return edges
+        for edge in edges:
+            yield edge
     
     def get_metadata(self) -> dict[str, any]:
         """

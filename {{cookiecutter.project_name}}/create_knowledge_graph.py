@@ -38,19 +38,15 @@ def main():
         # Add any additional configuration parameters here
     )
     
-    # Add the adapter to BioCypher
-    bc.add_adapter(adapter)
-    
     # Create the knowledge graph
     logger.info("Creating knowledge graph...")
-    bc.write_nodes()
-    bc.write_edges()
-    
-    # Write the graph to Neo4j
-    logger.info("Writing to Neo4j...")
-    bc.write_to_neo4j()
+    bc.write_nodes(adapter.get_nodes())
+    bc.write_edges(adapter.get_edges())
     
     logger.info("Knowledge graph creation completed successfully!")
+
+    # Create final summary
+    bc.summary()
 
 
 if __name__ == "__main__":
