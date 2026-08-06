@@ -10,6 +10,6 @@
     "author_email": "user@example.com",
     "version": "0.1.0",
     "license": "MIT",
-    "python_version": "3.11",
+    "python_version": "3.13",
     "biocypher_version": "latest"
 }
