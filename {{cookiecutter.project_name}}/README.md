@@ -79,6 +79,8 @@ This will:
 3. Start the Neo4j instance
 
 Access Neo4j at: http://localhost:7474
+
+Note that you will need to switch the BioCypher mode `offline` to `false` via `biocypher_config.yaml`, and add the `"neo4j>=5.0"` dependency in `pyproject.toml` for this to work.
 {%- endif %}
 
 {%- if cookiecutter.include_tests == "y" %}
