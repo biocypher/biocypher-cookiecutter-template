@@ -1,0 +1,91 @@
+name: Template CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Weekly, to catch BioCypher releases that break generated projects
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  default-project:
+    name: Default project
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: generated/my-biocypher-pipeline
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+      - name: Generate project
+        working-directory: ${{ github.workspace }}
+        run: uvx cookiecutter --no-input -o generated .
+      - name: Install project
+        run: uv sync --python 3.13
+      - name: Run generated tests
+        run: uv run pytest
+      - name: Run pipeline
+        run: uv run python create_knowledge_graph.py
+      - name: Check pipeline output
+        run: |
+          test -f biocypher-out/neo4j-admin-import-call.sh
+          test -f biocypher-out/Protein-part000.parquet
+          test -f biocypher-out/Gene-part000.parquet
+          test -f biocypher-out/Protein_encoded_by_gene-part000.parquet
+
+  opt-out-project:
+    name: Project without Docker and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: generated/my-biocypher-pipeline
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+      - name: Generate project
+        working-directory: ${{ github.workspace }}
+        run: uvx cookiecutter --no-input -o generated . include_docker=n include_tests=n
+      - name: Check optional files are removed
+        run: |
+          test ! -e Dockerfile
+          test ! -e docker-compose.yml
+          test ! -e .dockerignore
+          test ! -e config/biocypher_config.docker.yaml
+          test ! -e tests
+      - name: Install project
+        run: uv sync --python 3.13
+      - name: Run pipeline
+        run: uv run python create_knowledge_graph.py
+
+  docker-project:
+    name: Docker Compose
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: generated/my-biocypher-pipeline
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+      - name: Generate project
+        working-directory: ${{ github.workspace }}
+        run: uvx cookiecutter --no-input -o generated .
+      - name: Start services
+        run: docker compose up -d --build
+      - name: Wait for pipeline
+        run: docker compose wait my_biocypher_pipeline
+      - name: Check graph in Neo4j
+        run: |
+          edges=$(docker compose exec -T neo4j cypher-shell -u neo4j -p password --format plain \
+            "MATCH (:protein)-[r:protein_encoded_by_gene]->(:gene) RETURN count(r)" | tail -n 1)
+          test "$edges" = "2"
+      - name: Show logs
+        if: failure()
+        run: docker compose logs
