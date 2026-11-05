@@ -166,8 +166,8 @@ def get_latest_biocypher_version():
             return data["info"]["version"]
     except Exception as e:
         print(f"Warning: Could not fetch latest BioCypher version from PyPI: {e}")
-        print("Falling back to version 0.10.1")
-        return "0.10.1"
+        print("Falling back to version 0.17.0")
+        return "0.17.0"
 
 
 if __name__ == "__main__":
