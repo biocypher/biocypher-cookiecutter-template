@@ -62,8 +62,8 @@ def main():
             content = pyproject_path.read_text()
             # Replace the version in the dependencies
             content = content.replace(
-                'biocypher>={{ cookiecutter.biocypher_version }}',
-                f'biocypher>={latest_version}'
+                'biocypher[neo4j]>={{ cookiecutter.biocypher_version }}',
+                f'biocypher[neo4j]>={latest_version}'
             )
             pyproject_path.write_text(content)
             print(f"✓ Updated pyproject.toml with BioCypher version {latest_version}")
