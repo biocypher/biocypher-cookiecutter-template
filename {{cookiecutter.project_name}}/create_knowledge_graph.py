@@ -6,6 +6,7 @@ This script creates a knowledge graph using BioCypher and the PLACEHOLDER_ADAPTE
 """
 
 import logging
+import os
 from pathlib import Path
 
 from biocypher import BioCypher
@@ -25,13 +26,14 @@ def main():
     
     # Initialize BioCypher
     bc = BioCypher(
-        biocypher_config_path="config/biocypher_config.yaml",
+        biocypher_config_path=os.environ.get("BIOCYPHER_CONFIG_PATH", "config/biocypher_config.yaml"),
         schema_config_path="config/schema_config.yaml"
     )
     
     # Initialize the adapter
-    # TODO: Configure your CSV data source path here
-    data_source = "data/your_data.csv"  # Update this with your actual CSV file path
+    # TODO: Configure your data source here. The adapter ignores it
+    # and yields dummy data until get_nodes() and get_edges() are implemented.
+    data_source = "data/your_data"  # Update this with your actual data source
     
     adapter = PLACEHOLDER_ADAPTER_CLASS_NAME(
         data_source=data_source,
@@ -45,8 +47,14 @@ def main():
     
     logger.info("Knowledge graph creation completed successfully!")
 
-    # Create final summary
-    bc.summary()
+    # Offline mode: write the Neo4j import script and create final summary
+    try:
+        import_call = bc.write_import_call()
+    except NotImplementedError:
+        logger.info("Online mode: data was written directly to Neo4j")
+    else:
+        logger.info(f"Import script written to {import_call}")
+        bc.summary()
 
 
 if __name__ == "__main__":

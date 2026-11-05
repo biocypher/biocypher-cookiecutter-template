@@ -12,7 +12,7 @@ authors = [
 ]
 requires-python = ">={{ cookiecutter.python_version }}"
 dependencies = [
-    "biocypher>={{ cookiecutter.biocypher_version }}",
+    "biocypher[neo4j]>={{ cookiecutter.biocypher_version }}",
     "pandas>=2.0.0",
     "numpy>=1.24.0",
     "requests>=2.32.0",
@@ -46,14 +46,14 @@ python_functions = ["test_*"]
 
 [tool.black]
 line-length = 88
-target-version = ['py311']
+target-version = ['py{{ cookiecutter.python_version | replace('.', '') }}']
 
 [tool.isort]
 profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "{{ cookiecutter.python_version }}"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true

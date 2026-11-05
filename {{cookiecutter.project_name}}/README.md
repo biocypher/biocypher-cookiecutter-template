@@ -43,7 +43,7 @@ This BioCypher pipeline processes {{ cookiecutter.data_source_type }} data using
    uv sync
    ```
 
-3. Configure your data source in `create_knowledge_graph.py`
+3. Implement `get_nodes()` and `get_edges()` in the adapter (they return dummy data until then) and configure your data source in `create_knowledge_graph.py`
 
 4. Update the schema configuration in `config/schema_config.yaml` if needed
 
@@ -56,6 +56,8 @@ Run the pipeline to create the knowledge graph:
 ```bash
 python create_knowledge_graph.py
 ```
+
+This writes the output files and `neo4j-admin-import-call.sh` to `biocypher-out/`. Run that script from your Neo4j home directory to import the data.
 
 ### Configuration
 
@@ -75,12 +77,12 @@ docker-compose up -d
 
 This will:
 1. Build the BioCypher pipeline
-2. Import the data into Neo4j
-3. Start the Neo4j instance
+2. Start the Neo4j instance
+3. Write the data into Neo4j
 
 Access Neo4j at: http://localhost:7474
 
-Note that you will need to switch the BioCypher mode `offline` to `false` via `biocypher_config.yaml`, and add the `"neo4j>=5.0"` dependency in `pyproject.toml` for this to work.
+The pipeline container uses `config/biocypher_config.docker.yaml`, which switches BioCypher to online mode and connects to the Neo4j service. Its password has to match `NEO4J_AUTH` in `docker-compose.yml`.
 {%- endif %}
 
 {%- if cookiecutter.include_tests == "y" %}
@@ -105,6 +107,9 @@ pytest tests/ --cov={{ cookiecutter.package_name }} --cov-report=html
 {{ cookiecutter.project_name }}/
 ├── config/
 │   ├── biocypher_config.yaml
+{%- if cookiecutter.include_docker == "y" %}
+│   ├── biocypher_config.docker.yaml
+{%- endif %}
 │   └── schema_config.yaml
 ├── src/{{ cookiecutter.package_name }}/
 │   └── adapters/

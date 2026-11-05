@@ -1,4 +1,4 @@
-# Schema Configuration for sys-bio-kgs
+# Schema Configuration for {{ cookiecutter.project_name }}
 
 # Example schema configuration
 # Customize this based on your data source and requirements

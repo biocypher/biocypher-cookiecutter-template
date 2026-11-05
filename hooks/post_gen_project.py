@@ -3,12 +3,14 @@
 Post-generation hook for {{ cookiecutter.project_name }}.
 
 This script runs after the project is generated to:
-1. Initialize git repository
-2. Create initial commit
-3. Set up additional directories
+1. Remove optional files that were not selected
+2. Set up additional directories
+3. Initialize git repository
+4. Create initial commit
 """
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -62,8 +64,8 @@ def main():
             content = pyproject_path.read_text()
             # Replace the version in the dependencies
             content = content.replace(
-                'biocypher>={{ cookiecutter.biocypher_version }}',
-                f'biocypher>={latest_version}'
+                'biocypher[neo4j]>={{ cookiecutter.biocypher_version }}',
+                f'biocypher[neo4j]>={latest_version}'
             )
             pyproject_path.write_text(content)
             print(f"✓ Updated pyproject.toml with BioCypher version {latest_version}")
@@ -72,6 +74,14 @@ def main():
     if generated_names:
         update_adapter_files(project_dir, generated_names)
 
+    # Remove optional files that were not selected
+    if "{{ cookiecutter.include_docker }}" != "y":
+        for file_name in ["Dockerfile", "docker-compose.yml", ".dockerignore", "config/biocypher_config.docker.yaml"]:
+            (project_dir / file_name).unlink()
+        print("✓ Removed Docker files")
+    if "{{ cookiecutter.include_tests }}" != "y":
+        shutil.rmtree(project_dir / "tests")
+        print("✓ Removed tests/")
 
     # Create additional directories
     additional_dirs = ["logs", "output", "data"]
@@ -89,6 +99,8 @@ def main():
     print(f"\n💡 For the best adaptation experience, use the BioCypher MCP Server:")
     print(f"   https://biocypher.org/BioCypher/llms/")
     print(f"   This provides interactive guidance for customizing your pipeline!")
+    print(f"\n⚠ The adapter yields dummy data: data_source_type is only a placeholder and")
+    print(f"  {{ cookiecutter.data_source_type }} data is not read yet. Update the adapter for your data source.")
     print(f"\nNext steps:")
     print(f"1. cd {{ cookiecutter.project_name }}")
     print(f"2. pip install -e .  # or uv sync")
@@ -154,8 +166,8 @@ def get_latest_biocypher_version():
             return data["info"]["version"]
     except Exception as e:
         print(f"Warning: Could not fetch latest BioCypher version from PyPI: {e}")
-        print("Falling back to version 0.10.1")
-        return "0.10.1"
+        print("Falling back to version 0.17.0")
+        return "0.17.0"
 
 
 if __name__ == "__main__":

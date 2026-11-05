@@ -35,38 +35,30 @@ class TestPLACEHOLDER_ADAPTER_CLASS_NAME:
         
         assert metadata["name"] == "PLACEHOLDER_ADAPTER_CLASS_NAME"
         assert metadata["data_source"] == "test_data_source.csv"
-        assert metadata["data_type"] == "csv"
+        assert metadata["data_type"] == "{{ cookiecutter.data_source_type }}"
         assert metadata["version"] == "{{ cookiecutter.version }}"
         assert metadata["adapter_class"] == "PLACEHOLDER_ADAPTER_CLASS_NAME"
     
-    def test_get_nodes_with_csv_file(self):
-        """Test node extraction from CSV file."""
-        # Create a temporary CSV file
-        test_data = pd.DataFrame({
-            'id': ['1', '2', '3'],
-            'name': ['Protein A', 'Gene B', 'Compound C'],
-            'type': ['protein', 'gene', 'compound']
-        })
+    def test_get_nodes(self):
+        """Test that nodes are returned."""
+        adapter = PLACEHOLDER_ADAPTER_CLASS_NAME("test_data_source.csv")
+        nodes = list(adapter.get_nodes())
         
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
-            test_data.to_csv(f, index=False)
-            temp_file = f.name
+        # Adapter now returns dummy data, not data from the data source
+        # Check that nodes are tuples with 3 elements (node_id, node_label, properties_dict)
+        assert len(nodes) > 0
+        assert isinstance(nodes[0], tuple)
+        assert len(nodes[0]) == 3
+        node_id, node_label, properties = nodes[0]
+        assert isinstance(node_id, str)
+        assert isinstance(node_label, str)
+        assert isinstance(properties, dict)
+    
+    def test_warns_about_dummy_data(self, caplog):
+        """Test that the unimplemented adapter warns that it yields dummy data."""
+        PLACEHOLDER_ADAPTER_CLASS_NAME("test_data_source.csv")
         
-        try:
-            adapter = PLACEHOLDER_ADAPTER_CLASS_NAME(temp_file)
-            nodes = list(adapter.get_nodes())
-            
-            # Adapter now returns dummy data, not CSV data
-            # Check that nodes are tuples with 3 elements (node_id, node_label, properties_dict)
-            assert len(nodes) > 0
-            assert isinstance(nodes[0], tuple)
-            assert len(nodes[0]) == 3
-            node_id, node_label, properties = nodes[0]
-            assert isinstance(node_id, str)
-            assert isinstance(node_label, str)
-            assert isinstance(properties, dict)
-        finally:
-            Path(temp_file).unlink()
+        assert "dummy data" in caplog.text
     
     def test_validate_data_source_with_existing_csv(self):
         """Test data source validation with existing CSV file."""
@@ -94,14 +86,24 @@ class TestPLACEHOLDER_ADAPTER_CLASS_NAME:
         edges = list(adapter.get_edges())
         
         # Adapter now returns dummy edges
-        # Check that edges are tuples with 5 elements (source_id, target_id, edge_label, edge_type, properties_dict)
+        # Check that edges are tuples with 5 elements (edge_id, source_id, target_id, edge_label, properties_dict)
         assert isinstance(edges, list)
         assert len(edges) > 0
         assert isinstance(edges[0], tuple)
         assert len(edges[0]) == 5
-        source_id, target_id, edge_label, edge_type, properties = edges[0]
+        edge_id, source_id, target_id, edge_label, properties = edges[0]
+        assert edge_id is None or isinstance(edge_id, str)
         assert isinstance(source_id, str)
         assert isinstance(target_id, str)
         assert isinstance(edge_label, str)
-        assert isinstance(edge_type, str)
         assert isinstance(properties, dict)
+
+    def test_edge_endpoints_match_schema_node_types(self):
+        """Test that edge sources and targets are nodes of the schema's types."""
+        adapter = PLACEHOLDER_ADAPTER_CLASS_NAME("test_data_source.csv")
+        node_types = {node_id: node_label for node_id, node_label, _ in adapter.get_nodes()}
+
+        # protein_encoded_by_gene in schema_config.yaml: source protein, target gene
+        for _, source_id, target_id, _, _ in adapter.get_edges():
+            assert node_types.get(source_id) == "protein"
+            assert node_types.get(target_id) == "gene"
