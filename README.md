@@ -18,16 +18,7 @@ A [Cookiecutter](https://cookiecutter.readthedocs.io/) template for creating Bio
 
 ### Via MCP Tool (Recommended)
 
-Use the BioCypher MCP tool in Cursor or other MCP clients:
-
-```python
-create_biocypher_pipeline(
-    project_name="my-protein-pipeline",
-    project_description="Pipeline for protein data analysis",
-    template_method="cookiecutter",
-    data_source_type="api"
-)
-```
+Connect Cursor or another MCP client to the BioCypher MCP server at https://mcp.biocypher.org/mcp and ask it to create a pipeline. Its `get_cookiecutter_instructions` tool returns the cookiecutter command to run.
 
 ### Direct CookieCutter Usage
 
@@ -124,11 +115,11 @@ cookiecutter . --no-input project_name="test-pipeline" data_source_type="api"
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License.
 
 ## Next Steps: Adapting Your Pipeline
 
-The best way to adapt your BioCypher pipeline to your specific needs is through the **BioCypher MCP Server** available at https://mcp.biocypher.org. This MCP server provides:
+The best way to adapt your BioCypher pipeline to your specific needs is through the **BioCypher MCP Server** available at https://mcp.biocypher.org/mcp. This MCP server provides:
 
 - **Interactive Guidance**: Step-by-step assistance for adapter creation
 - **Schema Configuration**: Help with BioCypher schema setup and customization
@@ -139,7 +130,7 @@ The best way to adapt your BioCypher pipeline to your specific needs is through 
 ### Using the BioCypher MCP Server
 
 1. **Install MCP Client**: Use Cursor or another MCP-compatible client
-2. **Connect to Server**: Add the BioCypher MCP server at https://mcp.biocypher.org
+2. **Connect to Server**: Add the BioCypher MCP server at https://mcp.biocypher.org/mcp
 3. **Get Guidance**: Use the interactive tools to customize your pipeline
 4. **Implement**: Follow the provided patterns and recommendations
 
