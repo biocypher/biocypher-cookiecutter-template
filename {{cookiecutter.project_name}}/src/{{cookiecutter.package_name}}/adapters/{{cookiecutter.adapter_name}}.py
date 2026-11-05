@@ -6,6 +6,8 @@ This adapter handles the {{ cookiecutter.data_source_type }} data source for Bio
 
 import logging
 from pathlib import Path
+from typing import Any
+
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -111,7 +113,7 @@ class PLACEHOLDER_ADAPTER_CLASS_NAME:
         for edge in edges:
             yield edge
     
-    def get_metadata(self) -> dict[str, any]:
+    def get_metadata(self) -> dict[str, Any]:
         """
         Get metadata about the data source.
         
