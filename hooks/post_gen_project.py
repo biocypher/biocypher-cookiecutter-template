@@ -3,12 +3,14 @@
 Post-generation hook for {{ cookiecutter.project_name }}.
 
 This script runs after the project is generated to:
-1. Initialize git repository
-2. Create initial commit
-3. Set up additional directories
+1. Remove optional files that were not selected
+2. Set up additional directories
+3. Initialize git repository
+4. Create initial commit
 """
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -72,6 +74,14 @@ def main():
     if generated_names:
         update_adapter_files(project_dir, generated_names)
 
+    # Remove optional files that were not selected
+    if "{{ cookiecutter.include_docker }}" != "y":
+        for file_name in ["Dockerfile", "docker-compose.yml", ".dockerignore", "config/biocypher_config.docker.yaml"]:
+            (project_dir / file_name).unlink()
+        print("✓ Removed Docker files")
+    if "{{ cookiecutter.include_tests }}" != "y":
+        shutil.rmtree(project_dir / "tests")
+        print("✓ Removed tests/")
 
     # Create additional directories
     additional_dirs = ["logs", "output", "data"]
@@ -89,6 +99,8 @@ def main():
     print(f"\n💡 For the best adaptation experience, use the BioCypher MCP Server:")
     print(f"   https://biocypher.org/BioCypher/llms/")
     print(f"   This provides interactive guidance for customizing your pipeline!")
+    print(f"\n⚠ The adapter yields dummy data: data_source_type is only a placeholder and")
+    print(f"  {{ cookiecutter.data_source_type }} data is not read yet. Update the adapter for your data source.")
     print(f"\nNext steps:")
     print(f"1. cd {{ cookiecutter.project_name }}")
     print(f"2. pip install -e .  # or uv sync")

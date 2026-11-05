@@ -1,7 +1,7 @@
 """
 PLACEHOLDER_PASCAL_CASE_NAME Adapter
 
-This adapter handles CSV data source for BioCypher.
+This adapter handles the {{ cookiecutter.data_source_type }} data source for BioCypher.
 """
 
 import logging
@@ -13,9 +13,9 @@ logger = logging.getLogger(__name__)
 
 class PLACEHOLDER_ADAPTER_CLASS_NAME:
     """
-    Adapter for CSV data source.
+    Adapter for the {{ cookiecutter.data_source_type }} data source.
     
-    This adapter implements the BioCypher adapter interface for CSV data.
+    This adapter implements the BioCypher adapter interface.
     """
     
     def __init__(self, data_source: str | Path, **kwargs):
@@ -23,12 +23,17 @@ class PLACEHOLDER_ADAPTER_CLASS_NAME:
         Initialize the adapter.
         
         Args:
-            data_source: Path to the CSV data source
+            data_source: Path to the data source
             **kwargs: Additional configuration parameters
         """
         self.data_source = data_source
         self.config = kwargs
         logger.info(f"Initialized PLACEHOLDER_ADAPTER_CLASS_NAME with data source: {data_source}")
+        # TODO: Remove this warning once get_nodes() and get_edges() read self.data_source
+        logger.warning(
+            "PLACEHOLDER_ADAPTER_CLASS_NAME ignores the data source and yields dummy data. "
+            "Update get_nodes() and get_edges() to read your {{ cookiecutter.data_source_type }} data source."
+        )
         
     def get_nodes(self):
         """
@@ -39,6 +44,7 @@ class PLACEHOLDER_ADAPTER_CLASS_NAME:
         """
         logger.info("Extracting nodes from data source")
         
+        # TODO: Replace the dummy data with nodes read from self.data_source
         # Dummy protein nodes matching schema
         protein_nodes = [
             ("P12345", "protein", {
@@ -89,6 +95,7 @@ class PLACEHOLDER_ADAPTER_CLASS_NAME:
         """
         logger.info("Extracting edges from data source")
         
+        # TODO: Replace the dummy data with edges read from self.data_source
         # Dummy edges matching schema (protein_encoded_by_gene with input_label "encoded_by")
         edges = [
             (None, "P12345", "ENSG00000129965", "encoded_by", {
@@ -114,14 +121,14 @@ class PLACEHOLDER_ADAPTER_CLASS_NAME:
         return {
             'name': 'PLACEHOLDER_ADAPTER_CLASS_NAME',
             'data_source': str(self.data_source),
-            'data_type': 'csv',
+            'data_type': '{{ cookiecutter.data_source_type }}',
             'version': '{{ cookiecutter.version }}',
             'adapter_class': 'PLACEHOLDER_ADAPTER_CLASS_NAME'
         }
     
     def validate_data_source(self) -> bool:
         """
-        Validate that the CSV data source is accessible and properly formatted.
+        Validate that the data source is accessible and properly formatted.
         
         Returns:
             True if data source is valid, False otherwise
@@ -131,7 +138,7 @@ class PLACEHOLDER_ADAPTER_CLASS_NAME:
             if not data_path.exists() or not data_path.is_file():
                 return False
             
-            # Try to read the CSV to validate format
+            # Example check for a CSV file, update this for your data source
             df = pd.read_csv(data_path, nrows=1)  # Read just first row
             return len(df.columns) > 0
             

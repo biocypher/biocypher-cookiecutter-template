@@ -35,38 +35,30 @@ class TestPLACEHOLDER_ADAPTER_CLASS_NAME:
         
         assert metadata["name"] == "PLACEHOLDER_ADAPTER_CLASS_NAME"
         assert metadata["data_source"] == "test_data_source.csv"
-        assert metadata["data_type"] == "csv"
+        assert metadata["data_type"] == "{{ cookiecutter.data_source_type }}"
         assert metadata["version"] == "{{ cookiecutter.version }}"
         assert metadata["adapter_class"] == "PLACEHOLDER_ADAPTER_CLASS_NAME"
     
-    def test_get_nodes_with_csv_file(self):
-        """Test node extraction from CSV file."""
-        # Create a temporary CSV file
-        test_data = pd.DataFrame({
-            'id': ['1', '2', '3'],
-            'name': ['Protein A', 'Gene B', 'Compound C'],
-            'type': ['protein', 'gene', 'compound']
-        })
+    def test_get_nodes(self):
+        """Test that nodes are returned."""
+        adapter = PLACEHOLDER_ADAPTER_CLASS_NAME("test_data_source.csv")
+        nodes = list(adapter.get_nodes())
         
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
-            test_data.to_csv(f, index=False)
-            temp_file = f.name
+        # Adapter now returns dummy data, not data from the data source
+        # Check that nodes are tuples with 3 elements (node_id, node_label, properties_dict)
+        assert len(nodes) > 0
+        assert isinstance(nodes[0], tuple)
+        assert len(nodes[0]) == 3
+        node_id, node_label, properties = nodes[0]
+        assert isinstance(node_id, str)
+        assert isinstance(node_label, str)
+        assert isinstance(properties, dict)
+    
+    def test_warns_about_dummy_data(self, caplog):
+        """Test that the unimplemented adapter warns that it yields dummy data."""
+        PLACEHOLDER_ADAPTER_CLASS_NAME("test_data_source.csv")
         
-        try:
-            adapter = PLACEHOLDER_ADAPTER_CLASS_NAME(temp_file)
-            nodes = list(adapter.get_nodes())
-            
-            # Adapter now returns dummy data, not CSV data
-            # Check that nodes are tuples with 3 elements (node_id, node_label, properties_dict)
-            assert len(nodes) > 0
-            assert isinstance(nodes[0], tuple)
-            assert len(nodes[0]) == 3
-            node_id, node_label, properties = nodes[0]
-            assert isinstance(node_id, str)
-            assert isinstance(node_label, str)
-            assert isinstance(properties, dict)
-        finally:
-            Path(temp_file).unlink()
+        assert "dummy data" in caplog.text
     
     def test_validate_data_source_with_existing_csv(self):
         """Test data source validation with existing CSV file."""

@@ -43,7 +43,7 @@ This BioCypher pipeline processes {{ cookiecutter.data_source_type }} data using
    uv sync
    ```
 
-3. Configure your data source in `create_knowledge_graph.py`
+3. Implement `get_nodes()` and `get_edges()` in the adapter (they return dummy data until then) and configure your data source in `create_knowledge_graph.py`
 
 4. Update the schema configuration in `config/schema_config.yaml` if needed
 

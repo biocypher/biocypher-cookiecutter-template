@@ -31,8 +31,9 @@ def main():
     )
     
     # Initialize the adapter
-    # TODO: Configure your CSV data source path here
-    data_source = "data/your_data.csv"  # Update this with your actual CSV file path
+    # TODO: Configure your data source here. The adapter ignores it
+    # and yields dummy data until get_nodes() and get_edges() are implemented.
+    data_source = "data/your_data"  # Update this with your actual data source
     
     adapter = PLACEHOLDER_ADAPTER_CLASS_NAME(
         data_source=data_source,
