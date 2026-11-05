@@ -49,9 +49,14 @@ neo4j:
   user: neo4j
   password: neo4j
 
-  delimiter: ";"
-  array_delimiter: "|"
-  quote_character: "'"
+  csv_column_delimiter: ","
+  csv_array_delimiter: ";"
+  csv_string_quote_character: '"'
+
+  # `parquet` needs a Neo4j version that supports import with Parquet
+  file_format: parquet # or `csv`
+
+  edge_labels_order: "Leaves" # the only order Neo4j supports
 
   multi_db: true
 
@@ -92,7 +97,7 @@ sqlite:
 #---- RDF (Resource Description Framework) data model
 rdf:
   ### RDF configuration ###
-  rdf_format: turtle
+  file_format: turtle
 
 #---- NetworkX graph data model
 networkx:
