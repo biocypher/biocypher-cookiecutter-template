@@ -85,17 +85,17 @@ class PLACEHOLDER_ADAPTER_CLASS_NAME:
         Extract edges from the data source.
         
         Yields:
-            Tuples of (source_id, target_id, edge_label, edge_type, properties_dict) for each edge
+            Tuples of (edge_id, source_id, target_id, edge_label, properties_dict) for each edge
         """
         logger.info("Extracting edges from data source")
         
         # Dummy edges matching schema (protein_encoded_by_gene with input_label "encoded_by")
         edges = [
-            ("P12345", "ENSG00000129965", "encoded_by", "encoded_by", {
+            (None, "P12345", "ENSG00000129965", "encoded_by", {
                 "confidence": 0.95,
                 "evidence": "experimental"
             }),
-            ("P01308", "ENSG00000117411", "encoded_by", "encoded_by", {
+            (None, "P01308", "ENSG00000117411", "encoded_by", {
                 "confidence": 0.98,
                 "evidence": "experimental"
             }),

@@ -94,14 +94,24 @@ class TestPLACEHOLDER_ADAPTER_CLASS_NAME:
         edges = list(adapter.get_edges())
         
         # Adapter now returns dummy edges
-        # Check that edges are tuples with 5 elements (source_id, target_id, edge_label, edge_type, properties_dict)
+        # Check that edges are tuples with 5 elements (edge_id, source_id, target_id, edge_label, properties_dict)
         assert isinstance(edges, list)
         assert len(edges) > 0
         assert isinstance(edges[0], tuple)
         assert len(edges[0]) == 5
-        source_id, target_id, edge_label, edge_type, properties = edges[0]
+        edge_id, source_id, target_id, edge_label, properties = edges[0]
+        assert edge_id is None or isinstance(edge_id, str)
         assert isinstance(source_id, str)
         assert isinstance(target_id, str)
         assert isinstance(edge_label, str)
-        assert isinstance(edge_type, str)
         assert isinstance(properties, dict)
+
+    def test_edge_endpoints_match_schema_node_types(self):
+        """Test that edge sources and targets are nodes of the schema's types."""
+        adapter = PLACEHOLDER_ADAPTER_CLASS_NAME("test_data_source.csv")
+        node_types = {node_id: node_label for node_id, node_label, _ in adapter.get_nodes()}
+
+        # protein_encoded_by_gene in schema_config.yaml: source protein, target gene
+        for _, source_id, target_id, _, _ in adapter.get_edges():
+            assert node_types.get(source_id) == "protein"
+            assert node_types.get(target_id) == "gene"
