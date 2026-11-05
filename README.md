@@ -56,7 +56,7 @@ The template uses the following variables:
 | `author_email` | Author email | `user@example.com` |
 | `version` | Project version | `0.1.0` |
 | `license` | License type | `MIT` |
-| `python_version` | Python version requirement | `3.11` |
+| `python_version` | Python version requirement | `3.13` |
 | `biocypher_version` | BioCypher version | `latest` (fetched from PyPI) |
 
 ## Generated Project Structure
@@ -65,6 +65,7 @@ The template uses the following variables:
 my-biocypher-pipeline/
 ├── config/
 │   ├── biocypher_config.yaml
+│   ├── biocypher_config.docker.yaml
 │   └── schema_config.yaml
 ├── src/my_biocypher_pipeline/
 │   ├── __init__.py
